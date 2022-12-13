@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    ToDo Liste
+{% endblock %}
+
+{% block body %}
+    <h1>ToDo Liste :</h1>
+    <ol>
+        {% for cle, element in todos %}
+            <li><strong>{{ cle }}</strong> <br> {{ element }}</li>             
+        {% endfor %}
+    </ol>
+{% endblock %}
