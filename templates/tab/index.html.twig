@@ -1,25 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.css') }}">
-    <title>Document</title>
-</head>
-<body>
+{% extends "template.html.twig" %}
+
+{% block body %}    
     <table class="table">
+        {% set sumnotes = 0 %}
+
         {% for note in notes %}
             <tr>
                 <td>{{ note }}</td>
             </tr>
+        {% set sumnotes = sumnotes + note %}
         {% endfor %}   
     </table>
 
     <div class="alert alert-info">
         <p>Nombre de notes : {{ notes | length }}</p>  
         <p>Note minimale : {{ min(notes) }}</p>  
-        <p>Note maximale : {{ max(notes) }}</p> 
-    </div>  
-</body>
-</html>
+        <p>Note maximale : {{ max(notes) }}</p>
+        <p><strong>Moyenne de la classe : {{  (sumnotes / notes|length) | round(2)}}</strong></p> 
+    </div> 
+{% endblock %}
