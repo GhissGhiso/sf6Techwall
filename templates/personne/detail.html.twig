@@ -1,0 +1,11 @@
+{% extends "template.html.twig" %}
+
+{% block body %}
+    <div class="alert alert-success">
+        {{ personne.firstname | title}} {{ personne.name | upper}} a {{ personne.age }} an{{ (personne.age >1) ? 's' : '' }}
+    </div>
+{% endblock %}
+
+{% block title %}
+    {{ personne.firstname | title}} {{ personne.name | title}}
+{% endblock %}
