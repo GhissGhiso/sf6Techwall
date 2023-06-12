@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{asset('node_modules/bootstrap/dist/css/bootstrap.css')}}">
+    <title>Users</title>
+</head>
+<body>
+    <table class="table table-danger table-striped table-hover">
+        <tr class="table-light">
+            <th>Firstname</th>
+            <th>Name</th>
+            <th>Age</th>
+        </tr>
+        <tbody> 
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.firstname }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.age }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

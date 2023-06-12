@@ -8,6 +8,7 @@
 </head>
 <body>
     <table class="table table-dark table-striped">
+        {% set sumnotes = 0 %}
         <thead>
             <tr>
                 <th >Num</th>
@@ -21,13 +22,15 @@
                     <td>{{ i+1 }}</td>
                     <td>{{ note }}</td>
                 </tr>
+                {% set sumnotes = sumnotes + note %}
             {% endfor %}
         </tbody>
     </table>
     <div class="alert alert-info">
-        <p>Nombre de valeurs : {{ notes | length }}</p>
+        <p>Nombre de notes : {{ notes | length }}</p>
         <p>Note minimale : {{ min(notes) }}</p>
         <p>Note maximale : {{ max(notes) }}</p>
+        <p><strong>Moyenne de la classe : {{  (sumnotes / notes|length) | round(2)}}</strong></p> 
     </div>
 </body>
 </html>
