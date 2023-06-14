@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{{asset('node_modules/bootstrap/dist/css/bootstrap.css')}}">
-</head>
-<body>
-    <table class="table table-dark table-striped">
+{% extends 'template.html.twig' %}
+
+{% block body %}
+    <table class="table table-dark table-striped table-hover">
         {% set sumnotes = 0 %}
         <thead>
             <tr>
@@ -16,8 +10,7 @@
             </tr>
         </thead>
         <tbody> 
-            {% for i, note in notes %}           
-            {# {% for note in notes %} #}
+            {% for i, note in notes %} 
                 <tr>
                     <td>{{ i+1 }}</td>
                     <td>{{ note }}</td>
@@ -31,6 +24,5 @@
         <p>Note minimale : {{ min(notes) }}</p>
         <p>Note maximale : {{ max(notes) }}</p>
         <p><strong>Moyenne de la classe : {{  (sumnotes / notes|length) | round(2)}}</strong></p> 
-    </div>
-</body>
-</html>
+    </div>    
+{% endblock %}

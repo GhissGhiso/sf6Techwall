@@ -1,17 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{asset('node_modules/bootstrap/dist/css/bootstrap.css')}}">
-    <title>Users</title>
-</head>
-<body>
+{% extends 'template.html.twig' %}
+
+{% block title %}
+    Users
+{% endblock %}
+
+{% block pageTitle %}
+    Users
+{% endblock %}
+
+{% block body %}
+    {{ include('fragments/date-jour.html.twig') }}
+    <div class="alert alert-warning">
+        <a href="{{ path('tab', { nb: 7}) }}">Stats Table</a>
+    </div>
     <table class="table table-danger table-striped table-hover">
         <tr class="table-light">
             <th>Firstname</th>
             <th>Name</th>
             <th>Age</th>
+            <th>Message</th>
         </tr>
         <tbody> 
             {% for user in users %}
@@ -19,9 +26,11 @@
                     <td>{{ user.firstname }}</td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.age }}</td>
+                    <td>
+                        {{ render(controller('App\\Controller\\FirstController::sayHello', {firstname: user.firstname, name: user.name})) }}
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
-    </table>
-</body>
-</html>
+    </table>    
+{% endblock %}
