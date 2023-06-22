@@ -6,6 +6,7 @@ use App\Entity\Personne;
 use App\Form\PersonneType;
 use App\Service\Helpers;
 use App\Service\MailerService;
+use App\Service\PdfService;
 use App\Service\UploaderService;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -21,6 +22,13 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 class PersonneController extends AbstractController
 {
     public function __construct(private LoggerInterface $logger, private Helpers $helper) {}
+
+    #[Route('/pdf/{id<\d+>}', name: 'pdf')]
+    public function generatePdfPersonne(Personne $personne = null, PdfService $pdf)
+    {
+        $html = $this->render('personne/detail.html.twig', compact('personne'));
+        $pdf->showPdfFile($html);
+    }
 
     #[Route('/', name: 'list')]
     public function index(ManagerRegistry $doctrine): Response
@@ -120,7 +128,7 @@ class PersonneController extends AbstractController
             if ($photo) {
                 $directory = $this->getParameter('personne_directory');
 
-                $personne->setImage($uploaderService->UploadFile($photo, $directory));
+                $personne->setImage($uploaderService->uploadFile($photo, $directory));
             }
 
             $manager = $doctrine->getManager();

@@ -7,20 +7,20 @@ use Symfony\Component\Mailer\MailerInterface;
 
 class MailerService
 {
-    public function __construct(private MailerInterface $mailer){}
+    public function __construct(private MailerInterface $mailer, private $replyTo){}
 
     public function sendEmail(
-        $to = 'ghissghiso@gmail.com',
+        $to = 'engongkpame@gmail.com',
         $content = '<p>See Twig integration for better HTML integration!</p>',
         $subject = 'Time for Symfony Mailer!'
     ): void
     {
         $email = (new Email())
-            ->from('mymail@example.com')
+            ->from('ghissghiso@gmail.com')
             ->to($to)
             //->cc('cc@example.com')
             //->bcc('bcc@example.com')
-            //->replyTo('fabien@example.com')
+            ->replyTo($this->replyTo)
             //->priority(Email::PRIORITY_HIGH)
             ->subject($subject)
             // ->text('Sending emails is fun again!')

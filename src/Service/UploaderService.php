@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
     // Et elle doit nous retourner le nom de ce file
     public function __construct(private SluggerInterface $slugger) {}
 
-    public function UploadFile(
+    public function uploadFile(
         UploadedFile $file,
         string $directoryFolder
     )
