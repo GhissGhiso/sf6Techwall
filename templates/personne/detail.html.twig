@@ -5,5 +5,8 @@
 {% block body %}
 <div class="alert alert-success">
     {{ personne.firstname }} {{ personne.name }} a {{ personne.age }} ans.
+    {% if app.user %}
+        <p>Created By: {{ app.user.email }}</p>
+    {% endif %}
 </div>
 {% endblock %}
