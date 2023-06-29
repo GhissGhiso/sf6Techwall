@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Personne;
+use App\Event\AddPersonneEvent;
+use App\Event\ListallPersonnesEvent;
 use App\Form\PersonneType;
 use App\Service\Helpers;
 use App\Service\MailerService;
@@ -16,12 +18,17 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('personne', name: 'personne.')]
+#[
+    Route('personne', name: 'personne.'),
+    IsGranted('ROLE_USER')
+]
 class PersonneController extends AbstractController
 {
-    public function __construct(private LoggerInterface $logger, private Helpers $helper) {}
+    public function __construct(private LoggerInterface $logger, private Helpers $helper, private EventDispatcherInterface $dispatcher) {}
 
     #[Route('/pdf/{id<\d+>}', name: 'pdf')]
     public function generatePdfPersonne(Personne $personne = null, PdfService $pdf)
@@ -45,6 +52,9 @@ class PersonneController extends AbstractController
         $repository = $doctrine->getRepository(Personne::class);
         $personnes = $repository->findPersonneByAgeInterval($ageMin, $ageMax);
 
+        $listAllPersonneEvent = new ListallPersonnesEvent(count($personnes));
+        $this->dispatcher->dispatch($listAllPersonneEvent, ListallPersonnesEvent::LIST_ALL_PERSONNE_EVENT);
+
         return $this->render('personne/index.html.twig', compact('personnes'));
     }
 
@@ -61,10 +71,13 @@ class PersonneController extends AbstractController
         ]);
     }
 
-    #[Route('/alls/{page?1}/{nbre?12}', name: 'list.alls')]
+    #[
+        Route('/alls/{page?1}/{nbre?12}', name: 'list.alls'),
+        IsGranted("ROLE_USER")
+    ]
     public function indexAlls(ManagerRegistry $doctrine, $page, $nbre): Response
     {
-        echo $this->helper->sayCc();
+        // echo $this->helper->sayCc();
         $repository = $doctrine->getRepository(Personne::class);
         $nbPersonne = $repository->count([]);
 
@@ -101,6 +114,8 @@ class PersonneController extends AbstractController
         MailerService $mailer
     ): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $new = false;
 
         if (!$personne) {
@@ -144,6 +159,13 @@ class PersonneController extends AbstractController
             $manager->flush();
 
             // Afficher un message de succès
+            if ($new) {
+                // On crée notre évènement
+                $addPersonneEvent = new AddPersonneEvent($personne);
+
+                // On va maintenant dispatcher cet événement
+                $this->dispatcher->dispatch($addPersonneEvent, AddPersonneEvent::ADD_PERSONNE_EVENT);
+            }
             
             $mailmessage = $personne->getFirstname() . ' ' . $personne->getName() . ' ' . $message;
 
@@ -160,7 +182,10 @@ class PersonneController extends AbstractController
         }
     }
 
-    #[Route('/delete/{id}', name: 'delete')]
+    #[
+        Route('/delete/{id}', name: 'delete'),
+        IsGranted('ROLE_ADMIN')
+    ]
     public function deletePersonne(Personne $personne = null, ManagerRegistry $doctrine): RedirectResponse
     {
         // Récupéere la personne
