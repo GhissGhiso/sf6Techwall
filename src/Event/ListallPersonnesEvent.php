@@ -10,7 +10,7 @@ class ListallPersonnesEvent extends Event
 
     public function __construct(private int $nbPersonne){}
 
-    public function getPersonne() : int {
+    public function getNbPersonne() : int {
         return $this->nbPersonne;
     }
 }

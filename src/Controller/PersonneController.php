@@ -52,9 +52,6 @@ class PersonneController extends AbstractController
         $repository = $doctrine->getRepository(Personne::class);
         $personnes = $repository->findPersonneByAgeInterval($ageMin, $ageMax);
 
-        $listAllPersonneEvent = new ListallPersonnesEvent(count($personnes));
-        $this->dispatcher->dispatch($listAllPersonneEvent, ListallPersonnesEvent::LIST_ALL_PERSONNE_EVENT);
-
         return $this->render('personne/index.html.twig', compact('personnes'));
     }
 
@@ -84,6 +81,9 @@ class PersonneController extends AbstractController
         $nbrePage = ceil($nbPersonne / $nbre);
 
         $personnes = $repository->findBy([], [], $nbre, ($page - 1) * $nbre);
+
+        $listAllPersonneEvent = new ListallPersonnesEvent(count($personnes));
+        $this->dispatcher->dispatch($listAllPersonneEvent, ListallPersonnesEvent::LIST_ALL_PERSONNE_EVENT);
 
         return $this->render('personne/index.html.twig', [
             'personnes' => $personnes,
@@ -166,11 +166,9 @@ class PersonneController extends AbstractController
                 // On va maintenant dispatcher cet événement
                 $this->dispatcher->dispatch($addPersonneEvent, AddPersonneEvent::ADD_PERSONNE_EVENT);
             }
-            
-            $mailmessage = $personne->getFirstname() . ' ' . $personne->getName() . ' ' . $message;
 
             $this->addFlash('success', $personne->getName() . " " . $personne->getFirstname() . $message);
-            $mailer->sendEmail(content: $mailmessage);
+            
             // Rediriger vers la liste de personne
             return $this->redirectToRoute('personne.list');
         } else {
